@@ -3,7 +3,7 @@ from config import DATA_DIR
 
 
 def main():
-    analyzer = OrderAnalyzer("")
+    analyzer = OrderAnalyzer()
 
     results = analyzer.process_all_files(DATA_DIR)
 

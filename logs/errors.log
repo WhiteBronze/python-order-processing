@@ -1,7 +1,1 @@
-2026-07-28 03:00:22 - ERROR - Колонка 'status' не найдена в order_2000000.csv
-2026-07-28 03:00:26 - ERROR - Колонка 'status' не найдена в order_5000000.csv
-2026-07-28 03:02:34 - ERROR - Колонка 'status' не найдена в order_2000000.csv
-2026-07-28 03:02:37 - ERROR - Колонка 'status' не найдена в order_5000000.csv
-2026-07-28 18:56:56 - ERROR - Ошибка загрузки : [Errno 2] No such file or directory: ''
-2026-07-28 19:01:11 - ERROR - Ошибка загрузки : [Errno 2] No such file or directory: ''
-2026-07-28 19:01:37 - ERROR - Ошибка загрузки : [Errno 2] No such file or directory: ''
+2026-07-30 19:02:22 - ERROR - Колонка 'status' не найдена в order_10000.csv

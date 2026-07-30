@@ -3,7 +3,7 @@ import sys
 sys.path.append('..')
 
 import pandas as pd
-from config import STATUS_COLUMN, DELIVERED_STATUS, AMOUNT_COLUMN, REPORTS_DIR, LOGS_DIR, OUTPUT_FILE
+from config import STATUS_COLUMN, DELIVERED_STATUS, AMOUNT_COLUMN, REPORTS_DIR, LOGS_DIR, OUTPUT_FILE, DATA_DIR
 import os
 import logging
 
@@ -19,16 +19,9 @@ logging.basicConfig(
 
 
 class OrderAnalyzer:
-    def __init__(self, file_path):
+    def __init__(self):
         self.__data = None
-        self.__file_name = os.path.basename(file_path)
-
-        try:
-            self.__data = pd.read_csv(file_path)
-            self.__data.columns = self.__data.columns.str.lower()
-        except Exception as e:
-            logging.error(f"Ошибка загрузки {self.__file_name}: {str(e)}")
-            self.__data = None
+        self.__file_name = None
 
     def filter_delivered(self):
         if self.__data is None:
@@ -45,6 +38,13 @@ class OrderAnalyzer:
 
         if AMOUNT_COLUMN not in delivered.columns:
             logging.error(f"Колонка '{AMOUNT_COLUMN}' не найдена в {self.__file_name}")
+            return None
+
+        try:
+            delivered = delivered.copy()
+            delivered[AMOUNT_COLUMN] = pd.to_numeric(delivered[AMOUNT_COLUMN], errors='raise')
+        except Exception as e:
+            logging.error(f"Ошибка преобразования '{AMOUNT_COLUMN}' в {self.__file_name}: {str(e)}")
             return None
 
         try:
@@ -75,7 +75,7 @@ class OrderAnalyzer:
 
         return self.calculate_metric()
 
-    def process_all_files(self, data_dir=REPORTS_DIR):
+    def process_all_files(self, data_dir=DATA_DIR):
         if not os.path.exists(data_dir):
             print(f"Папка {data_dir} не найдена")
             return []
@@ -87,6 +87,7 @@ class OrderAnalyzer:
             return []
 
         results = []
+        errors = 0
 
         for file_name in csv_files:
             file_path = os.path.join(data_dir, file_name)
@@ -94,13 +95,17 @@ class OrderAnalyzer:
 
             result = self.process_file(file_path)
 
-            if result:
+            if result is not None:
                 results.append(result)
                 print(f"  Выручка: {result['total_revenue']:.2f}")
                 print(f"  Средний чек: {result['avg_check']:.2f}")
                 print(f"  Заказов: {result['orders_count']}")
             else:
+                errors += 1
                 print(f"  Ошибка при обработке")
+
+        print(f"\nОбработано файлов: {len(results)}")
+        print(f"Ошибок: {errors}")
 
         return results
 
